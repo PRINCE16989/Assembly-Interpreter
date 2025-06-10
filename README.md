@@ -46,3 +46,14 @@ This project implements a simple Assembly language interpreter in C++. It consis
         14.SW x6, 0(x5)
      ```
   - This code is just for reference. The comments and empty lines must be removed before trying to execute this using the interpreter.
+## Execution
+Download all the files into a folder.
+1. Compile the project:
+  ```
+  g++ -o interpretor interpreter.cpp CPU.cpp Memory.cpp Instruction.cpp
+  ```
+2. Run the interpreter with a input file: 
+  ```
+  ./interpreter < input.txt
+  ```
+- If you want the program to be interactive type remove the comments for promt messages from the code and execute it wihtout an input file
