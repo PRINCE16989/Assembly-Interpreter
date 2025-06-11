@@ -11,7 +11,7 @@ void showMenu() {
     std::cout << "\nEnter your choice: ";
 }
 
-void dataEntryOptions(Memory* memory, uint32_t& nextAddress) {
+void dataEntryOptions(Memory* memory, uint32_t& nextAddress, std::string& dataFile) {
     // std::cout << "\n1. Manual variable entry\n";
     // std::cout << "2. Load variables from file\n";
     // std::cout << "3. Go back to main menu\n";
@@ -19,10 +19,10 @@ void dataEntryOptions(Memory* memory, uint32_t& nextAddress) {
     std::cin >> choice;
     switch (choice) {
         case 1:
-            memory->manualVariableInput(nextAddress);
+            memory->manualVariableInput(nextAddress, dataFile);
             break;
         case 2:
-            memory->loadVariablesFromFile(nextAddress);
+            memory->loadVariablesFromFile(nextAddress, dataFile);
             break;
         case 3:
             return; // Go back to main menu
@@ -31,7 +31,7 @@ void dataEntryOptions(Memory* memory, uint32_t& nextAddress) {
     }
 }
 
-void InstructionEntryOptions(Memory* memory) {
+void InstructionEntryOptions(Memory* memory, std::string &codeFile) {
     // std::cout << "\n1. Insert instructions manually\n";
     // std::cout << "2. Load instructions from file\n";
     // std::cout << "3. Go back to main menu\n";
@@ -39,10 +39,10 @@ void InstructionEntryOptions(Memory* memory) {
     std::cin >> choice;
     switch (choice) {
         case 1:
-            memory->insertInstructionsManually();
+            memory->insertInstructionsManually(codeFile);
             break;
         case 2:
-            memory->loadInstructionsFromFile();
+            memory->loadInstructionsFromFile(codeFile);
             break;
         case 3:
             return; // Go back to main menu
@@ -54,9 +54,12 @@ void InstructionEntryOptions(Memory* memory) {
 int main() {
     // Initialize CPU and memory with default files
     // You can change these filenames as needed
-    const std::string codeFile = "fib.txt";   
-    const std::string dataFile = "data.txt";
-    CPU cpu(codeFile, dataFile);
+    std::string codeFile = "default.txt";   
+    std::string dataFile = "default_data.txt";
+    std::string outputFile = "output.txt";
+    // CPU cpu(codeFile, dataFile);
+    // Alternatively, you can use the default constructor for non-interactive mode
+    CPU cpu;
 
     uint32_t nextVarAddress = 0;
     bool running = true;
@@ -66,16 +69,18 @@ int main() {
         std::cin >> choice;
         switch (choice) {
             case 1:
-                InstructionEntryOptions(cpu.getMemory());
+                InstructionEntryOptions(cpu.getMemory(), codeFile);
                 break;
             case 2:
-                dataEntryOptions(cpu.getMemory(), nextVarAddress);
+                dataEntryOptions(cpu.getMemory(), nextVarAddress, dataFile);
                 break;
             case 3: {
                 // std::cout << "Running assembly simulator...\n";
                 cpu.run();
                 // Save data on exit (optional)
-                cpu.getMemory()->saveDataToFile(dataFile);
+                // can save data in input_data file itself
+                // saved in output.txt for running testcases.
+                cpu.getMemory()->saveDataToFile(outputFile);
                 running = false;
                 break;
             }
