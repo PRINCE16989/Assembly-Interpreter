@@ -1,16 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <stdexcept>
-#include <sstream>
-#include <cctype>
-#include <unordered_map>
 
 enum class Opcode {
     NOP,
     SW, SH, SB, LH, LB, LHU, LBU, LW, LI, 
     LUI, AUIPC, JAL, JALR, LA,
-    ADD, SUB, AND, OR, XOR,
+    ADD, SUB, AND, OR, XOR, MUL,
     SLL, SRL, SRA,
     ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI,
     BEQ, BNE, BLT, BGE, BLTU, BGEU,
@@ -32,14 +28,31 @@ private:
     Operands operands;
     bool valid;
     std::string originalLine;
-public:
-    Instruction(const std::string& line);
 
+    // Helper function to trim whitespace from a string
+    std::string trim(const std::string& s);
+
+    // Parsing functions for different operand formats
+    Operands parseTwoRegOneImm(const std::string& operandPart);
+    Operands parseThreeReg(const std::string& operandPart);
+    Operands parseRegImm(const std::string& operandPart);
+    Operands parseStoreLoad(const std::string& operandPart);
+    Operands parseLoadAddress(const std::string& operandPart);
+public:
+    // constructor which decodes the instruction from a line of text
+    Instruction(const std::string& line);  
+    
+    // Getters
     Opcode getOpcode() const { return opcode; }
     const Operands& getOperands() const { return operands; }
     bool isValid() const { return valid; }
+    
+    // Get the original line of the instruction
     std::string toString() const;
+
+    // used for decoding the opcode from a string
     static Opcode stringToOpcode(const std::string&);
+
 friend class CPU;
 };
 
@@ -59,108 +72,4 @@ inline int32_t bit_12OverflowSim(int32_t x)
         z = 0 - z;
     }
     return z;
-}
-
-
-// Trims whitespace from both ends
-inline std::string trim(const std::string& s) {
-    size_t first = s.find_first_not_of(" \t");
-    if (first == std::string::npos) return "";
-    size_t last = s.find_last_not_of(" \t");
-    return s.substr(first, last - first + 1);
-}
-
-// Parses a line like "x1, x2, 5" or "x10,x11,-8"
-inline Operands parseTwoRegOneImm(const std::string& operandPart) {
-    Operands result;
-    std::stringstream ss(operandPart);
-    std::string rd, rs1, imm;
-    // Comma-separated
-    if (!std::getline(ss, rd, ',')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, rs1, ',')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, imm))      return { "", "", "", "", 0, false };
-
-    result.rd  = trim(rd);
-    result.rs1 = trim(rs1);
-    // Trim and parse immediate
-    imm = trim(imm);
-    try {
-        result.immediate = bit_12OverflowSim(std::stoi(imm));
-        result.valid = true;
-    } catch (...) {
-        result.valid = false;
-    }
-    return result;
-}
-
-inline Operands parseThreeReg(const std::string& operandPart) {
-    Operands result;
-    std::stringstream ss(operandPart);
-    std::string rd, rs1, rs2;
-    // Comma-separated
-    if (!std::getline(ss, rd, ',')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, rs1, ',')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, rs2))       return { "", "", "", "", 0, false };
-
-    result.rd  = trim(rd);
-    result.rs1 = trim(rs1);
-    result.rs2 = trim(rs2);
-    result.valid = true;
-    return result;
-}
-
-inline Operands parseRegImm(const std::string& operandPart) {
-    Operands result;
-    std::stringstream ss(operandPart);
-    std::string rd, imm;
-    // Comma-separated
-    if (!std::getline(ss, rd, ',')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, imm))      return { "", "", "", "", 0, false };
-
-    result.rd = trim(rd);
-    // Trim and parse immediate
-    imm = trim(imm);
-    try {
-        result.immediate = bit_12OverflowSim(std::stoi(imm));
-        result.valid = true;
-    } catch (...) {
-        result.valid = false;
-    }
-    return result;
-}
-
-inline Operands parseStoreLoad(const std::string& operandPart) {
-    Operands result;
-    std::stringstream ss(operandPart);
-    std::string rd, rs1, imm;
-    // Comma-separated
-    if (!std::getline(ss, rd, ',')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, imm, '(')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, rs1, ')')) return { "", "", "", "", 0, false };
-
-    result.rd  = trim(rd);
-    result.rs1 = trim(rs1);
-    // Trim and parse immediate
-    imm = trim(imm);
-    try {
-        result.immediate = bit_12OverflowSim(std::stoi(imm));
-        result.valid = true;
-    } catch (...) {
-        result.valid = false;
-    }
-    return result;
-}
-
-inline Operands parseLoadAddress(const std::string& operandPart) {
-    Operands result;
-    std::stringstream ss(operandPart);
-    std::string rd, var;
-    // Comma-separated
-    if (!std::getline(ss, rd, ',')) return { "", "", "", "", 0, false };
-    if (!std::getline(ss, var))      return { "", "", "", "", 0, false };
-
-    result.rd  = trim(rd);
-    result.var = trim(var);
-    result.valid = true;
-    return result;
 }
