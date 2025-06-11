@@ -1,0 +1,14 @@
+LI x1, 0
+LI x2, 1
+LI x3, 2
+LA x5, n
+LW x4, 0(x5)
+ADDI x4, x4, 1
+LA x5, result
+ADD x6, x1, x2
+ADD x1, x2, x0
+ADD x2, x6, x0
+ADDI x3, x3, 1
+SUB x7, x4, x3
+BNE x7, x0, -5
+SW x6, 0(x5)
