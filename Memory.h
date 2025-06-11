@@ -3,29 +3,29 @@
 #include <unordered_map>
 #include <string>
 #include <cstdint>
-#include <stdexcept>
 #include "Instruction.h" 
 
 class Memory {
 public:
     // Constructor: accepts filenames for code and data
-    Memory(const std::string& codeFile, const std::string& dataFile);
+    Memory(std::string& codeFile, std::string& dataFile);
+    Memory() = default; // Default constructor for empty memory
 
     // Instruction memory
-    void insertInstructionsManually();
-    void loadInstructionsFromFile();
-    void loadInstructionsFromFile(const std::string& filename);
+    void insertInstructionsManually(std::string& codeFile);
+    void loadInstructionsFromFile(std::string& codeFile);
+    void loadInstructionsUsingFile(std::string& filename);
     const Instruction& fetchInstruction(uint32_t pc) const;
     size_t instructionCount() const;
 
     // Data memory
-    void loadVariablesFromFile(uint32_t& nextAddress);
+    void loadVariablesFromFile(uint32_t& nextAddress, std::string& dataFile);
     void loadVariablesFromFile(const std::string& dataFile);
-    void manualVariableInput(uint32_t& nextAddress);
+    void manualVariableInput(uint32_t& nextAddress, std::string& dataFile);
     void store(uint32_t address, int32_t value);
     int32_t load(uint32_t address) const;
 
-    // Variable symbol table (optional)
+    // Variable symbol table
     bool hasVariable(const std::string& name) const;
     uint32_t getVariableAddress(const std::string& name) const;
     std::vector<std::string> getVariableNames() const;
