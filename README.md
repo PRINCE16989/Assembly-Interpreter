@@ -12,7 +12,7 @@ This project implements a simple Assembly language interpreter in C++. It consis
 
 ## Some syntax Differences from RISC-V Assembly
 - use **capital letters** for operations(e.g. ADD, SUB, LI, LW...)
-- Do not insert **empty lines** or **comments** in between instructions. The parsing algorithm is not designed to handle comments or empty lines.
+- Do not insert **comments** in between instructions. The parsing algorithm is not designed to handle comments or empty lines.
 - When using variable names in the code, ensure that the variables have been allotted space in the memory before simulating the code.
 - Addition of variables using a file, the file should be done in the format given below, Adding variables in any different manner may lead to undefined behavior.
   ```
@@ -57,3 +57,6 @@ Download all the files into a folder.
   ./interpreter < input.txt
   ```
 - If you want the program to be interactive type remove the comments for promt messages from the code and execute it wihtout an input file
+
+Some Example assembly codes are given above(fibonacci, sum, gcd, reversing an array), along with some testcases for each of the code.
+You can run those using the shell script provided.
