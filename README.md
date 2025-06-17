@@ -45,7 +45,7 @@ This project implements a simple Assembly language interpreter in C++. It consis
                                  // i.e., to the instruction ADD x6, x1, x2 
         14.SW x6, 0(x5)
      ```
-  - This code is just for reference. The comments and empty lines must be removed before trying to execute this using the interpreter.
+  - This code is just for reference. The comments must be removed before trying to execute this using the interpreter.
 ## Execution
 Download all the files into a folder.
 1. Compile the project:
@@ -56,7 +56,7 @@ Download all the files into a folder.
   ```
   ./interpreter < input.txt
   ```
-- If you want the program to be interactive type remove the comments for promt messages from the code and execute it wihtout an input file
+- If you want the program to be interactive type remove the comments for promt messages from the code and execute it without an input file
 
 Some Example assembly codes are given above(fibonacci, sum, gcd, reversing an array), along with some testcases for each of the code.
 You can run those using the shell script provided.
